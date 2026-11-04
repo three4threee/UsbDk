@@ -211,7 +211,7 @@ static bool Controller_ParseIntRuleField(const TCHAR *Name, const TCHAR * Str, U
     else
     {
         tcout << TEXT("Invalid value for field \"") << Name << TEXT("\"") << endl;
-        return true;
+        return false;
     }
 }
 

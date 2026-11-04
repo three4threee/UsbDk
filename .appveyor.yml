@@ -7,6 +7,9 @@ before_build:
 
 build_script: buildAll.bat
 
+test_script:
+  - powershell -NoProfile -ExecutionPolicy Bypass -File Tests\UsbDkApiContractTests.ps1 -LibraryPath Install_Debug\x64\Debug\UsbDkHelper.dll
+
 skip_commits:
   message: /\[ci skip\]/
 

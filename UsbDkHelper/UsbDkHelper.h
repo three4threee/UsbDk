@@ -24,6 +24,12 @@
 #pragma once
 
 // UsbDkHelper C-interface
+//
+// On failure, functions returning BOOL, HANDLE, TransferResult, or InstallResult
+// set the calling thread's last-error value; retrieve it immediately with
+// GetLastError(). Pointer arguments must be valid for the duration of the call.
+// Handles are opaque values returned by UsbDk_StartRedirect or
+// UsbDk_CreateHiderHandle; do not reuse them after their matching stop/close call.
 
 #ifdef BUILD_DLL
 #define DLL __declspec(dllexport)
@@ -91,7 +97,8 @@ extern "C" {
     */
     DLL BOOL             UsbDk_GetDevicesList(PUSB_DK_DEVICE_INFO *DevicesArray, PULONG NumberDevices);
 
-    /* Release deviceArray list returned by UsbDk_GetDevicesList
+    /* Release deviceArray list returned by UsbDk_GetDevicesList.
+    * Passing NULL is a no-op.
     *
     * @params
     *    IN  - DevicesArray  pointer to  device list to be released
@@ -119,7 +126,8 @@ extern "C" {
                                                           PUSB_CONFIGURATION_DESCRIPTOR *Descriptor,
                                                           PULONG Length);
 
-    /* Release configuration descriptor returned by UsbDk_GetConfigurationDescriptor
+    /* Release configuration descriptor returned by UsbDk_GetConfigurationDescriptor.
+    * Passing NULL is a no-op.
     *
     * @params
     *    IN  - Descriptor - pointer to  descriptor to be released
@@ -131,7 +139,7 @@ extern "C" {
     */
     DLL void             UsbDk_ReleaseConfigurationDescriptor(PUSB_CONFIGURATION_DESCRIPTOR Descriptor);
 
-    /* Detach USB device from Windows and acquire it for exclusive access
+    /* Detach USB device from Windows and acquire it for exclusive access.
     *
     * @params
     *    IN  - DeviceID   id of device to be acquired
@@ -146,7 +154,7 @@ extern "C" {
     */
     DLL HANDLE           UsbDk_StartRedirect(PUSB_DK_DEVICE_ID DeviceID);
 
-    /* Return USB device to system
+    /* Return USB device to system and release the redirect handle.
     *
     * @params
     *    IN  - DeviceHandle  handle of acquired device
@@ -154,11 +162,12 @@ extern "C" {
     *
     * @return
     * TRUE if function succeeds
+    * Do not reuse the handle after a successful call.
     *
     */
     DLL BOOL             UsbDk_StopRedirect(HANDLE DeviceHandle);
 
-    /* Write to USB device pipe
+    /* Write to USB device pipe.
     *
     * @params
     *    IN  - DeviceHandle - handle of target USB device
@@ -168,11 +177,14 @@ extern "C" {
     *
     * @return
     *  Status of transfer
+    * The request and its buffers must remain valid until an asynchronous
+    * transfer completes. Use the system handle from
+    * UsbDk_GetRedirectorSystemHandle() to wait for or cancel I/O.
     *
     */
     DLL TransferResult   UsbDk_WritePipe(HANDLE DeviceHandle, PUSB_DK_TRANSFER_REQUEST Request, LPOVERLAPPED Overlapped);
 
-    /* Read from USB device pipe
+    /* Read from USB device pipe.
     *
     * @params
     *    IN  - DeviceHandle - handle of target USB device
@@ -182,6 +194,9 @@ extern "C" {
     *
     * @return
     *  Status of transfer
+    * The request and its buffers must remain valid until an asynchronous
+    * transfer completes. Use the system handle from
+    * UsbDk_GetRedirectorSystemHandle() to wait for or cancel I/O.
     *
     */
     DLL TransferResult   UsbDk_ReadPipe(HANDLE DeviceHandle, PUSB_DK_TRANSFER_REQUEST Request, LPOVERLAPPED Overlapped);

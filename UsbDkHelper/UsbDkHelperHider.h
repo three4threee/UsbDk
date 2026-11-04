@@ -43,6 +43,11 @@ extern "C" {
 // UsbDk hider API provides hide device feature that allows to detach USB device from the hosting system.
 // It can be useful in various scenarios, for example when there is no drivers for USB device on hosting machine
 // and user would like to avoid dealing with "New Hardware" wizard.
+//
+// On failure, functions returning BOOL, HANDLE, or InstallResult set the calling
+// thread's last-error value; retrieve it immediately with GetLastError().
+// Pointer arguments must be valid for the duration of the call. Hider handles
+// are opaque and must not be used after UsbDk_CloseHiderHandle().
 
     /* Create handle to hider interface of UsbDk driver
     *

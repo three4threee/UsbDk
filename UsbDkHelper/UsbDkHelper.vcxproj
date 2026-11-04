@@ -126,7 +126,9 @@
     <ProjectGuid>{30450FDC-051A-46F0-AD53-B10622834C30}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>UsbDkHelper</RootNamespace>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <UsbDkWindowsSdkVersion Condition="'$(UsbDkWindowsSdkVersion)' == ''">$(LatestTargetPlatformVersion)</UsbDkWindowsSdkVersion>
+    <WindowsTargetPlatformVersion>$(UsbDkWindowsSdkVersion)</WindowsTargetPlatformVersion>
+    <UsbDkLegacyWdkRoot Condition="'$(UsbDkLegacyWdkRoot)' == ''">C:\WinDDK\7600.16385.1</UsbDkLegacyWdkRoot>
     <TargetVersion>Windows7</TargetVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -476,12 +478,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9</IncludePath>
+    <IncludePath>$(IncludePath);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9</IncludePath>
     <OutDir>$(SolutionDir)Install_Debug\x86\XPDebug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug_NoSign|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9</IncludePath>
+    <IncludePath>$(IncludePath);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9</IncludePath>
     <OutDir>$(SolutionDir)Install_Debug\x86\XPDebug_NoSign\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'">
@@ -494,12 +496,12 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9</IncludePath>
+    <IncludePath>$(IncludePath);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9</IncludePath>
     <OutDir>$(SolutionDir)Install_Debug\$(Platform)\XPDebug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug_NoSign|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9</IncludePath>
+    <IncludePath>$(IncludePath);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9</IncludePath>
     <OutDir>$(SolutionDir)Install_Debug\$(Platform)\XPDebug_NoSign\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8 Release|Win32'">
@@ -516,7 +518,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9</IncludePath>
+    <IncludePath>$(IncludePath);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9</IncludePath>
     <OutDir>$(SolutionDir)Install\x86\XPRelease\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
@@ -525,7 +527,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9</IncludePath>
+    <IncludePath>$(IncludePath);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9</IncludePath>
     <OutDir>$(SolutionDir)Install\$(Platform)\XPRelease\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'">
