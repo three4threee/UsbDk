@@ -45,12 +45,25 @@ static void printExceptionString(const char *errorStr)
     OutputDebugString(tString.c_str());
 }
 
+static void reportException(const exception &e)
+{
+    printExceptionString(e.what());
+    auto error = dynamic_cast<const UsbDkNumErrorException*>(&e);
+    SetLastError(error != nullptr ? error->GetErrorCode() : ERROR_GEN_FAILURE);
+}
+
+static bool invalidParameter()
+{
+    SetLastError(ERROR_INVALID_PARAMETER);
+    return false;
+}
+
 template<typename T>
 static T* unpackHandle(HANDLE handle)
 {
     if (!handle || handle == INVALID_HANDLE_VALUE)
     {
-        throw UsbDkDriverFileException(TEXT("Invalid handle value"));
+        throw UsbDkDriverFileException(TEXT("Invalid handle value"), ERROR_INVALID_HANDLE);
     }
     return reinterpret_cast<T*>(handle);
 }
@@ -65,12 +78,12 @@ InstallResult UsbDk_InstallDriver(void)
     }
     catch (const UsbDkInstallerAbortedException &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return InstallAborted;
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         if (NeedRollBack)
         {
             UsbDk_UninstallDriver();
@@ -90,7 +103,7 @@ BOOL UsbDk_UninstallDriver(void)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -99,6 +112,20 @@ DLL BOOL UsbDk_GetConfigurationDescriptor(PUSB_DK_CONFIG_DESCRIPTOR_REQUEST Requ
                                     PUSB_CONFIGURATION_DESCRIPTOR *Descriptor,
                                     PULONG Length)
 {
+    if (Descriptor != nullptr)
+    {
+        *Descriptor = nullptr;
+    }
+    if (Length != nullptr)
+    {
+        *Length = 0;
+    }
+    if (Request == nullptr || Descriptor == nullptr || Length == nullptr)
+    {
+        invalidParameter();
+        return FALSE;
+    }
+
     try
     {
         UsbDkDriverAccess driver;
@@ -107,7 +134,7 @@ DLL BOOL UsbDk_GetConfigurationDescriptor(PUSB_DK_CONFIG_DESCRIPTOR_REQUEST Requ
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -120,12 +147,26 @@ DLL void UsbDk_ReleaseConfigurationDescriptor(PUSB_CONFIGURATION_DESCRIPTOR Desc
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
     }
 }
 
 BOOL UsbDk_GetDevicesList(PUSB_DK_DEVICE_INFO *DevicesArray, PULONG NumberDevices)
 {
+    if (DevicesArray != nullptr)
+    {
+        *DevicesArray = nullptr;
+    }
+    if (NumberDevices != nullptr)
+    {
+        *NumberDevices = 0;
+    }
+    if (DevicesArray == nullptr || NumberDevices == nullptr)
+    {
+        invalidParameter();
+        return FALSE;
+    }
+
     try
     {
         UsbDkDriverAccess driver;
@@ -134,7 +175,7 @@ BOOL UsbDk_GetDevicesList(PUSB_DK_DEVICE_INFO *DevicesArray, PULONG NumberDevice
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -147,12 +188,18 @@ void UsbDk_ReleaseDevicesList(PUSB_DK_DEVICE_INFO DevicesArray)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
     }
 }
 
 HANDLE UsbDk_StartRedirect(PUSB_DK_DEVICE_ID DeviceID)
 {
+    if (DeviceID == nullptr)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return INVALID_HANDLE_VALUE;
+    }
+
     try
     {
         unique_ptr<REDIRECTED_DEVICE_HANDLE> deviceHandle(new REDIRECTED_DEVICE_HANDLE);
@@ -164,7 +211,7 @@ HANDLE UsbDk_StartRedirect(PUSB_DK_DEVICE_ID DeviceID)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return INVALID_HANDLE_VALUE;
     }
 }
@@ -173,24 +220,32 @@ BOOL UsbDk_StopRedirect(HANDLE DeviceHandle)
 {
     try
     {
+        auto rawHandle = unpackHandle<REDIRECTED_DEVICE_HANDLE>(DeviceHandle);
+
         // if the driver is unaccessible the constructor raises exception
         // there is a question whether this check is required and whether this is correct thing to do
         // for now we leave it as is with TODO to investigate it in corner case flow
         // (for example UsbDk uninstall when there is active redirection)
         UsbDkDriverAccess checkDriverAccess;
-        unique_ptr<REDIRECTED_DEVICE_HANDLE> deviceHandle(unpackHandle<REDIRECTED_DEVICE_HANDLE>(DeviceHandle));
+        unique_ptr<REDIRECTED_DEVICE_HANDLE> deviceHandle(rawHandle);
         deviceHandle->RedirectorAccess.reset();
         return TRUE;
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
 
 TransferResult UsbDk_WritePipe(HANDLE DeviceHandle, PUSB_DK_TRANSFER_REQUEST Request, LPOVERLAPPED Overlapped)
 {
+    if (Request == nullptr)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return TransferFailure;
+    }
+
     try
     {
         auto deviceHandle = unpackHandle<REDIRECTED_DEVICE_HANDLE>(DeviceHandle);
@@ -198,13 +253,19 @@ TransferResult UsbDk_WritePipe(HANDLE DeviceHandle, PUSB_DK_TRANSFER_REQUEST Req
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return TransferFailure;
     }
 }
 
 TransferResult UsbDk_ReadPipe(HANDLE DeviceHandle, PUSB_DK_TRANSFER_REQUEST Request, LPOVERLAPPED Overlapped)
 {
+    if (Request == nullptr)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return TransferFailure;
+    }
+
     try
     {
         auto deviceHandle= unpackHandle<REDIRECTED_DEVICE_HANDLE>(DeviceHandle);
@@ -212,7 +273,7 @@ TransferResult UsbDk_ReadPipe(HANDLE DeviceHandle, PUSB_DK_TRANSFER_REQUEST Requ
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return TransferFailure;
     }
 }
@@ -227,7 +288,7 @@ BOOL UsbDk_AbortPipe(HANDLE DeviceHandle, ULONG64 PipeAddress)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -242,7 +303,7 @@ BOOL UsbDk_ResetPipe(HANDLE DeviceHandle, ULONG64 PipeAddress)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -257,7 +318,7 @@ BOOL UsbDk_SetAltsetting(HANDLE DeviceHandle, ULONG64 InterfaceIdx, ULONG64 AltS
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -272,7 +333,7 @@ DLL BOOL UsbDk_ResetDevice(HANDLE DeviceHandle)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -286,7 +347,7 @@ HANDLE UsbDk_GetRedirectorSystemHandle(HANDLE DeviceHandle)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return INVALID_HANDLE_VALUE;
     }
 }
@@ -300,23 +361,28 @@ HANDLE UsbDk_CreateHiderHandle()
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return INVALID_HANDLE_VALUE;
     }
 }
 
 DLL BOOL UsbDk_AddExtendedHideRule(HANDLE HiderHandle, PUSB_DK_HIDE_RULE_PUBLIC PublicRule, ULONG Type)
 {
-    USB_DK_HIDE_RULE Rule(PublicRule, Type);
+    if (PublicRule == nullptr)
+    {
+        return invalidParameter();
+    }
+
     try
     {
+        USB_DK_HIDE_RULE Rule(PublicRule, Type);
         auto HiderAccess = unpackHandle<UsbDkHiderAccess>(HiderHandle);
         HiderAccess->AddHideRule(Rule);
         return TRUE;
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -336,7 +402,7 @@ BOOL UsbDk_ClearHideRules(HANDLE HiderHandle)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return FALSE;
     }
 }
@@ -350,7 +416,7 @@ void UsbDk_CloseHiderHandle(HANDLE HiderHandle)
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
     }
 }
 
@@ -370,18 +436,24 @@ InstallResult ModifyPersistentHideRules(const USB_DK_HIDE_RULE &Rule,
     }
     catch (const UsbDkDriverFileException &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return InstallSuccessNeedReboot;
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return InstallFailure;
     }
 }
 
 DLL InstallResult UsbDk_AddExtendedPersistentHideRule(PUSB_DK_HIDE_RULE_PUBLIC PublicRule, ULONG Type)
 {
+    if (PublicRule == nullptr)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return InstallFailure;
+    }
+
     USB_DK_HIDE_RULE Rule(PublicRule, Type);
     return ModifyPersistentHideRules(Rule, &CRulesManager::AddRule);
 }
@@ -393,6 +465,12 @@ DLL InstallResult UsbDk_AddPersistentHideRule(PUSB_DK_HIDE_RULE_PUBLIC PublicRul
 
 DLL InstallResult UsbDk_DeleteExtendedPersistentHideRule(PUSB_DK_HIDE_RULE_PUBLIC PublicRule, ULONG Type)
 {
+    if (PublicRule == nullptr)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return InstallFailure;
+    }
+
     USB_DK_HIDE_RULE Rule(PublicRule, Type);
     return ModifyPersistentHideRules(Rule, &CRulesManager::DeleteRule);
 }
@@ -404,26 +482,45 @@ DLL InstallResult UsbDk_DeletePersistentHideRule(PUSB_DK_HIDE_RULE_PUBLIC Public
 
 DLL InstallResult UsbDk_DeleteAllPersistentRules(OUT PULONG pDeleted, OUT PULONG pNotDeleted)
 {
+    if (pDeleted != nullptr)
+    {
+        *pDeleted = 0;
+    }
+    if (pNotDeleted != nullptr)
+    {
+        *pNotDeleted = 0;
+    }
+    if (pDeleted == nullptr || pNotDeleted == nullptr)
+    {
+        SetLastError(ERROR_INVALID_PARAMETER);
+        return InstallFailure;
+    }
+
     try
     {
         CRulesManager Manager;
 
-        *pDeleted = *pNotDeleted = 0;
         *pDeleted = Manager.DeleteAllRules(*pNotDeleted);
 
         UsbDkDriverAccess driver;
         driver.UpdateRegistryParameters();
 
-        return *pNotDeleted ? InstallFailure : InstallSuccess;
+        if (*pNotDeleted != 0)
+        {
+            SetLastError(ERROR_GEN_FAILURE);
+            return InstallFailure;
+        }
+
+        return InstallSuccess;
     }
     catch (const UsbDkDriverFileException &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return InstallSuccessNeedReboot;
     }
     catch (const exception &e)
     {
-        printExceptionString(e.what());
+        reportException(e);
         return InstallFailure;
     }
 }

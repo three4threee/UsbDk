@@ -33,6 +33,20 @@ Library supports all Windows OS versions starting from Windows XP/2003.
 Just open UsbDk.sln from the source tree root in Visual Studio 2015 and compile
 desired configuration.
 
+`buildAll.bat` rebuilds the Win7, Win8, Win8.1, Win10, and XP configurations for
+Debug and Release on Win32 and x64, then generates trace metadata and the MSI.
+The XP configurations require WDK 7.1, defaulting to
+`C:\WinDDK\7600.16385.1`. Set the `UsbDkLegacyWdkRoot` MSBuild property to use
+another WDK 7.1 install location. `UsbDkWindowsSdkVersion` can pin the installed
+Windows SDK version; by default the projects use the WDK's latest version.
+AppVeyor uses the Visual Studio 2015 image and downloads the legacy
+`Microsoft.DriverKit.Build.Tasks.14.0.dll` task before building.
+
+The AppVeyor test step runs `Tests\UsbDkApiContractTests.ps1` against the x64
+Win10 Debug helper DLL. These API boundary tests need no installed
+UsbDk driver or attached USB device and verify invalid-parameter handling,
+output initialization, and last-error reporting.
+
 ## Installing and running
 
 Use UsbDkController.exe to install/uninstall and verify basic operation.

@@ -131,7 +131,9 @@
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>UsbDk_Package</RootNamespace>
     <ProjectName>UsbDk_Package</ProjectName>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <UsbDkWindowsSdkVersion Condition="'$(UsbDkWindowsSdkVersion)' == ''">$(LatestTargetPlatformVersion)</UsbDkWindowsSdkVersion>
+    <WindowsTargetPlatformVersion>$(UsbDkWindowsSdkVersion)</WindowsTargetPlatformVersion>
+    <UsbDkLegacyWdkRoot Condition="'$(UsbDkLegacyWdkRoot)' == ''">C:\WinDDK\7600.16385.1</UsbDkLegacyWdkRoot>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'" Label="Configuration">
@@ -884,7 +886,7 @@ copy "$(OutDir)UsbDk.sys" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkController.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkInstHelper.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkHelper.dll" "$(OutDir)UsbDk_Package"
-copy C:\WinDDK\7600.16385.1\redist\wdf\x86\WdfCoInstaller01009.dll "$(OutDir)UsbDk_Package"
+copy "$(UsbDkLegacyWdkRoot)\redist\wdf\x86\WdfCoInstaller01009.dll" "$(OutDir)UsbDk_Package"
 mkdir "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDk\UsbDkData.h" "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDkHelper\UsbDkHelper.h" "$(OutDir)UsbDk_Package\include"</Command>
@@ -901,7 +903,7 @@ copy "$(OutDir)UsbDk.sys" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkController.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkInstHelper.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkHelper.dll" "$(OutDir)UsbDk_Package"
-copy C:\WinDDK\7600.16385.1\redist\wdf\x86\WdfCoInstaller01009.dll "$(OutDir)UsbDk_Package"
+copy "$(UsbDkLegacyWdkRoot)\redist\wdf\x86\WdfCoInstaller01009.dll" "$(OutDir)UsbDk_Package"
 mkdir "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDk\UsbDkData.h" "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDkHelper\UsbDkHelper.h" "$(OutDir)UsbDk_Package\include"</Command>
@@ -927,7 +929,7 @@ copy "$(OutDir)UsbDk.sys" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkController.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkInstHelper.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkHelper.dll" "$(OutDir)UsbDk_Package"
-copy C:\WinDDK\7600.16385.1\redist\wdf\x86\WdfCoInstaller01009.dll "$(OutDir)UsbDk_Package"
+copy "$(UsbDkLegacyWdkRoot)\redist\wdf\x86\WdfCoInstaller01009.dll" "$(OutDir)UsbDk_Package"
 mkdir "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDk\UsbDkData.h" "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDkHelper\UsbDkHelper.h" "$(OutDir)UsbDk_Package\include"</Command>
@@ -1043,7 +1045,7 @@ copy "$(OutDir)UsbDk.sys" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkController.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkInstHelper.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkHelper.dll" "$(OutDir)UsbDk_Package"
-copy C:\WinDDK\7600.16385.1\redist\wdf\amd64\WdfCoInstaller01009.dll "$(OutDir)UsbDk_Package"
+copy "$(UsbDkLegacyWdkRoot)\redist\wdf\amd64\WdfCoInstaller01009.dll" "$(OutDir)UsbDk_Package"
 mkdir "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDk\UsbDkData.h" "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDkHelper\UsbDkHelper.h" "$(OutDir)UsbDk_Package\include"</Command>
@@ -1060,7 +1062,7 @@ copy "$(OutDir)UsbDk.sys" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkController.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkInstHelper.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkHelper.dll" "$(OutDir)UsbDk_Package"
-copy C:\WinDDK\7600.16385.1\redist\wdf\amd64\WdfCoInstaller01009.dll "$(OutDir)UsbDk_Package"
+copy "$(UsbDkLegacyWdkRoot)\redist\wdf\amd64\WdfCoInstaller01009.dll" "$(OutDir)UsbDk_Package"
 mkdir "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDk\UsbDkData.h" "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDkHelper\UsbDkHelper.h" "$(OutDir)UsbDk_Package\include"</Command>
@@ -1086,7 +1088,7 @@ copy "$(OutDir)UsbDk.sys" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkController.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkInstHelper.exe" "$(OutDir)UsbDk_Package"
 copy "$(OutDir)UsbDkHelper.dll" "$(OutDir)UsbDk_Package"
-copy C:\WinDDK\7600.16385.1\redist\wdf\amd64\WdfCoInstaller01009.dll "$(OutDir)UsbDk_Package"
+copy "$(UsbDkLegacyWdkRoot)\redist\wdf\amd64\WdfCoInstaller01009.dll" "$(OutDir)UsbDk_Package"
 mkdir "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDk\UsbDkData.h" "$(OutDir)UsbDk_Package\include"
 copy "$(ProjectDir)\..\UsbDkHelper\UsbDkHelper.h" "$(OutDir)UsbDk_Package\include"

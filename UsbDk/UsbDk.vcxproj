@@ -802,7 +802,9 @@
     <Configuration>Win8.1 Debug</Configuration>
     <Platform Condition="'$(Platform)' == ''">Win32</Platform>
     <RootNamespace>UsbDk</RootNamespace>
-    <WindowsTargetPlatformVersion>$(LatestTargetPlatformVersion)</WindowsTargetPlatformVersion>
+    <UsbDkWindowsSdkVersion Condition="'$(UsbDkWindowsSdkVersion)' == ''">$(LatestTargetPlatformVersion)</UsbDkWindowsSdkVersion>
+    <WindowsTargetPlatformVersion>$(UsbDkWindowsSdkVersion)</WindowsTargetPlatformVersion>
+    <UsbDkLegacyWdkRoot Condition="'$(UsbDkLegacyWdkRoot)' == ''">C:\WinDDK\7600.16385.1</UsbDkLegacyWdkRoot>
   </PropertyGroup>
   <PropertyGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
@@ -1237,14 +1239,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(ProjectDir);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9\;C:\WinDDK\7600.16385.1\inc\ddk\;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\wdf\kmdf\i386\1.9\;C:\WinDDK\7600.16385.1\lib\wxp\i386</LibraryPath>
+    <IncludePath>$(ProjectDir);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9\;$(UsbDkLegacyWdkRoot)\inc\ddk\;$(UsbDkLegacyWdkRoot)\inc\crt;$(UsbDkLegacyWdkRoot)\inc\api</IncludePath>
+    <LibraryPath>$(UsbDkLegacyWdkRoot)\lib\wdf\kmdf\i386\1.9\;$(UsbDkLegacyWdkRoot)\lib\wxp\i386</LibraryPath>
     <OutDir>$(SolutionDir)Install_Debug\x86\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug_NoSign|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(ProjectDir);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9\;C:\WinDDK\7600.16385.1\inc\ddk\;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\wdf\kmdf\i386\1.9\;C:\WinDDK\7600.16385.1\lib\wxp\i386</LibraryPath>
+    <IncludePath>$(ProjectDir);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9\;$(UsbDkLegacyWdkRoot)\inc\ddk\;$(UsbDkLegacyWdkRoot)\inc\crt;$(UsbDkLegacyWdkRoot)\inc\api</IncludePath>
+    <LibraryPath>$(UsbDkLegacyWdkRoot)\lib\wdf\kmdf\i386\1.9\;$(UsbDkLegacyWdkRoot)\lib\wxp\i386</LibraryPath>
     <OutDir>$(SolutionDir)Install_Debug\x86\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">
@@ -1254,8 +1256,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Release|Win32'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(ProjectDir);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9\;C:\WinDDK\7600.16385.1\inc\ddk\;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\wdf\kmdf\i386\1.9\;C:\WinDDK\7600.16385.1\lib\wxp\i386</LibraryPath>
+    <IncludePath>$(ProjectDir);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9\;$(UsbDkLegacyWdkRoot)\inc\ddk\;$(UsbDkLegacyWdkRoot)\inc\crt;$(UsbDkLegacyWdkRoot)\inc\api</IncludePath>
+    <LibraryPath>$(UsbDkLegacyWdkRoot)\lib\wdf\kmdf\i386\1.9\;$(UsbDkLegacyWdkRoot)\lib\wxp\i386</LibraryPath>
     <OutDir>$(SolutionDir)Install\x86\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'">
@@ -1313,14 +1315,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(ProjectDir);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9\;C:\WinDDK\7600.16385.1\inc\ddk\;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\wdf\kmdf\amd64\1.9\;C:\WinDDK\7600.16385.1\lib\wnet\amd64\</LibraryPath>
+    <IncludePath>$(ProjectDir);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9\;$(UsbDkLegacyWdkRoot)\inc\ddk\;$(UsbDkLegacyWdkRoot)\inc\crt;$(UsbDkLegacyWdkRoot)\inc\api</IncludePath>
+    <LibraryPath>$(UsbDkLegacyWdkRoot)\lib\wdf\kmdf\amd64\1.9\;$(UsbDkLegacyWdkRoot)\lib\wnet\amd64\</LibraryPath>
     <OutDir>$(SolutionDir)Install_Debug\$(Platform)\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Debug_NoSign|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(ProjectDir);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9\;C:\WinDDK\7600.16385.1\inc\ddk\;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\wdf\kmdf\amd64\1.9\;C:\WinDDK\7600.16385.1\lib\wnet\amd64\</LibraryPath>
+    <IncludePath>$(ProjectDir);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9\;$(UsbDkLegacyWdkRoot)\inc\ddk\;$(UsbDkLegacyWdkRoot)\inc\crt;$(UsbDkLegacyWdkRoot)\inc\api</IncludePath>
+    <LibraryPath>$(UsbDkLegacyWdkRoot)\lib\wdf\kmdf\amd64\1.9\;$(UsbDkLegacyWdkRoot)\lib\wnet\amd64\</LibraryPath>
     <OutDir>$(SolutionDir)Install_Debug\$(Platform)\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
@@ -1330,8 +1332,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='XP Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IncludePath>$(ProjectDir);C:\WinDDK\7600.16385.1\inc\wdf\kmdf\1.9\;C:\WinDDK\7600.16385.1\inc\ddk\;C:\WinDDK\7600.16385.1\inc\crt;C:\WinDDK\7600.16385.1\inc\api</IncludePath>
-    <LibraryPath>C:\WinDDK\7600.16385.1\lib\wdf\kmdf\amd64\1.9\;C:\WinDDK\7600.16385.1\lib\wnet\amd64\</LibraryPath>
+    <IncludePath>$(ProjectDir);$(UsbDkLegacyWdkRoot)\inc\wdf\kmdf\1.9\;$(UsbDkLegacyWdkRoot)\inc\ddk\;$(UsbDkLegacyWdkRoot)\inc\crt;$(UsbDkLegacyWdkRoot)\inc\api</IncludePath>
+    <LibraryPath>$(UsbDkLegacyWdkRoot)\lib\wdf\kmdf\amd64\1.9\;$(UsbDkLegacyWdkRoot)\lib\wnet\amd64\</LibraryPath>
     <OutDir>$(SolutionDir)Install\$(Platform)\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">
